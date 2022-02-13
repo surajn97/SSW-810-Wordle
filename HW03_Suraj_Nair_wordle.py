@@ -20,6 +20,7 @@ def game_loop(attempts):
     '''Gives user x amount of attempts to guess the hidden word'''
     # Hidden word
     game_word, valid_words = dictionary.load_dictionary()
+    print(game_word)
     game_word = list(game_word.upper())
     guess = False
     # List of words entered by the user
@@ -95,7 +96,7 @@ def main():
     game_distribuiton = [0]*6
     while True:
         success, win = game_loop(total_attempts)
-        if success:
+        if win:
             win_count += 1
             game_distribuiton[success] += 1
         num_of_games += 1
