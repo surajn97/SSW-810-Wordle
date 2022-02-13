@@ -20,11 +20,11 @@ def game_loop(attempts):
     '''Gives user x amount of attempts to guess the hidden word'''
     # Hidden word
     game_word, valid_words = dictionary.load_dictionary()
-    game_word = 'BARRY'
     game_word = list(game_word.upper())
     guess = False
     # List of words entered by the user
     attempted_words = []
+    success_attempt = 0
     for i in range(attempts):
         # Get Input from user and split the word into letters
         user_input = ui.get_user_input(
@@ -37,6 +37,7 @@ def game_loop(attempts):
         # Compare the user word to the game word and check if user won
         if compare_word(user_input, temp_game_word):
             guess = True
+            success_attempt = i
             break
     if guess:
         print('You guessed the word correctly!!')
@@ -44,7 +45,7 @@ def game_loop(attempts):
         print(f"The word was {''.join(game_word)}")
         print('Better luck next time!')
     print('Press enter to exit or guess another word')
-    game_loop(6)
+    return success_attempt, guess
 
 
 def compare_word(user_word, game_word):
@@ -77,10 +78,29 @@ def compare_word(user_word, game_word):
     return False
 
 
+def game_statistics(number_of_games, win_percent, guess_distribuition):
+    '''Game statistics info'''
+    print('\n***** Game Statistics *****\n')
+    print(f'{number_of_games} Games Played')
+    print(f'{win_percent:.2f}% Win Rate')
+    print('Guess Distribution:')
+    for i, dist in enumerate(guess_distribuition):
+        print(f'{i+1}: {dist}')
+
+
 def main():
     total_attempts = 6
     game_greetings(total_attempts)
-    game_loop(total_attempts)
+    num_of_games, win_count = 0, 0
+    game_distribuiton = [0]*6
+    while True:
+        success, win = game_loop(total_attempts)
+        if success:
+            win_count += 1
+            game_distribuiton[success] += 1
+        num_of_games += 1
+        game_statistics(num_of_games, (win_count /
+                        num_of_games)*100, game_distribuiton)
 
 
 if __name__ == "__main__":
