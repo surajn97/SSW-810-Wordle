@@ -1,3 +1,4 @@
+from unittest import result
 import HW03_Suraj_Nair_ui as ui
 import HW03_Suraj_Nair_dictionary as dictionary
 
@@ -48,24 +49,30 @@ def game_loop(attempts):
 
 def compare_word(user_word, game_word):
     '''Compares the user input word with the hidden word and returns true if both are equal'''
-    output = ''
     correct = 0
-    for y, letter in enumerate(user_word):
+    result = ['']*len(game_word)
+    for i in range(len(user_word)):
+        if game_word[i] == user_word[i]:
+            result[i] = ui.print_green(user_word[i])
+            user_word[i] = game_word[i] = '#'
+            correct += 1
+
+    if correct == len(game_word):
+        output = ''.join(result)
+        print(eval(f"f'{output}'"))
+        return True
+
+    for i, letter in enumerate(user_word):
+        if letter == '#':
+            continue
         if letter in game_word:
-            if user_word[y] == game_word[y]:
-                output += ui.print_green(letter)
-                correct += 1
-            else:
-                output += ui.print_yellow(letter + '`')
+            result[i] = ui.print_yellow(letter + '`')
             # Clear the letter so it's not searched again
             game_word[game_word.index(letter)] = '#'
         else:
-            output += ui.print_red(letter + '"')
-
+            result[i] = ui.print_red(letter + '"')
         # Check if the word was correct
-        if correct == len(game_word):
-            print(eval(f"f'{output}'"))
-            return True
+    output = ''.join(result)
     print(eval(f"f'{output}'"))
     return False
 
