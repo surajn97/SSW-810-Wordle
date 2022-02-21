@@ -17,13 +17,10 @@ class Wordle:
         print(ui.print_red('Red') +
               ' color shows letter is not in the word in any spot.\n')
 
-
-
     def game_loop(self, attempts: int):
         '''Gives user x amount of attempts to guess the hidden word'''
         # Hidden word
         game_word, valid_words = dictionary.load_dictionary()
-        print(game_word)
         guess = False
         # List of words entered by the user
         attempted_words = []
@@ -48,7 +45,6 @@ class Wordle:
             print('Better luck next time!')
         print('Press enter to exit or guess another word')
         return success_attempt, guess
-
 
     def compare_word(self, user_word: str, game_word: str):
         '''Compares the user input word with the hidden word and returns true if both are equal'''
@@ -90,7 +86,6 @@ class Wordle:
         for i, dist in enumerate(guess_distribuition):
             print(f'{i+1}: {dist}')
 
-
     def start_game(self):
         total_attempts = 6
         self.game_greetings(total_attempts)
@@ -104,7 +99,8 @@ class Wordle:
             num_of_games += 1
             self.game_statistics(num_of_games, (win_count /
                                                 num_of_games)*100, game_distribuiton)
-            
+
+
 if __name__ == "__main__":
     game = Wordle()
     game.start_game()
