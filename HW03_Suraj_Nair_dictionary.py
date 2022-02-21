@@ -1,8 +1,16 @@
 import random
+import os.path
+
+
+def check_file_exists(file_path):
+    '''Check if the dictionary file exists'''
+    return os.path.exists(file_path)
 
 
 def load_dictionary():
     '''Reads the words text file and returns a list of valid words along with a random word'''
+    if not check_file_exists('words.txt'):
+        return '', []
     words_file = open("words.txt", "r")
     words = words_file.read().splitlines()
     filtered_words = list(filter(lambda x: len(x) == 5, words))
