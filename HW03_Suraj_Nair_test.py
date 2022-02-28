@@ -3,19 +3,21 @@ from unittest.mock import patch
 import HW03_Suraj_Nair_ui as ui
 import HW03_Suraj_Nair_dictionary as dictionary
 import HW03_Suraj_Nair_wordle as wordle
+import HW03_Suraj_Nair_utility as utility
+import HW03_Suraj_Nair_logging as logger
 
 
 class WordleTest (unittest.TestCase):
 
-    words_list_resource = None
-
     @classmethod
     def setUpClass(cls):
-        temp, cls.words_list_resource = dictionary.load_dictionary()
+        cls.dic = dictionary.Dictionary()
+        cls.dic.load_dictionary()
+        cls.log = logger.Logger()
 
     @classmethod
     def tearDownClass(cls):
-        cls.words_list_resource = None
+        cls.log.close_log()
 
     def test_compare_word_true(self) -> None:
         '''Test if two words are same or not'''
@@ -29,61 +31,58 @@ class WordleTest (unittest.TestCase):
 
     def test_check_if_dictionary_exists(self) -> None:
         '''Test if the word file exists'''
-        self.assertTrue(dictionary.check_file_exists('words.txt'))
+        self.assertTrue(self.dic.check_file_exists('words.txt'))
 
     def test_check_if_dictionary_loaded(self) -> None:
         '''Test if the word file is loaded correctly with a list of 5 letter words'''
-        temp, words_list = dictionary.load_dictionary()
-        self.assertTrue(len(words_list) != 0)
-        self.assertTrue(not any(len(word) != 5 for word in words_list))
+        self.assertTrue(len(self.dic.words) != 0)
+        self.assertTrue(not any(len(word) != 5 for word in self.dic.words))
 
     def test_valid_dictionary_word_true(self) -> None:
         '''Check if a word is a valid dictionary word'''
-        self.assertTrue(dictionary.check_valid_word(
-            self.words_list_resource, 'arise'))
+        self.assertTrue(self.dic.check_valid_word('arise'))
 
     def test_valid_dictionary_word_false(self) -> None:
         '''Check if a word is a valid dictionary word'''
-        self.assertFalse(dictionary.check_valid_word(
-            self.words_list_resource, 'asdfg'))
+        self.assertFalse(self.dic.check_valid_word('asdfg'))
 
     @patch('builtins.input', side_effect=['Hello'])
     def test_get_user_input_true(self, mock_inputs) -> None:
         """Check if User Input is correct"""
         self.assertEqual(ui.get_user_input(
-            1, 6, ['trial', 'arise', 'paper'], self.words_list_resource), (True, 'HELLO'))
+            1, 6, ['trial', 'arise', 'paper'], self.dic, self.log), (True, 'HELLO'))
 
     @patch('builtins.input', side_effect=['doctor'])
     def test_get_user_input_length_false(self, mock_inputs) -> None:
         """User Input should return false as it is a 6 letter word"""
         self.assertEqual(ui.get_user_input(
-            1, 6, ['trial', 'arise', 'paper'], self.words_list_resource), (False, 'DOCTOR'))
+            1, 6, ['trial', 'arise', 'paper'], self.dic, self.log), (False, 'DOCTOR'))
 
     @patch('builtins.input', side_effect=['asdfg'])
     def test_get_user_input_valid_false(self, mock_inputs) -> None:
         """User Input should return false as it is not a valid word"""
         self.assertEqual(ui.get_user_input(
-            1, 6, ['trial', 'arise', 'paper'], self.words_list_resource), (False, 'ASDFG'))
+            1, 6, ['trial', 'arise', 'paper'], self.dic, self.log), (False, 'ASDFG'))
 
     def test_user_input_check_true(self) -> None:
         '''Check if a word satisfies all conditions'''
         self.assertTrue(ui.user_input_validation('hello', ['trial', 'arise', 'paper'],
-                                                 self.words_list_resource))
+                                                 self.dic))
 
     def test_user_input_check_false(self) -> None:
         '''Should fail as the word is in attempted words'''
         self.assertFalse(ui.user_input_validation('trial', ['trial', 'arise', 'paper'],
-                                                  self.words_list_resource))
+                                                  self.dic))
 
     def test_user_input_check_false_length(self) -> None:
         '''Should fail as the word is not 5 letter'''
         self.assertFalse(ui.user_input_validation('doctor', ['trial', 'arise', 'paper'],
-                                                  self.words_list_resource))
+                                                  self.dic))
 
     def test_user_input_check_false_alpha(self) -> None:
         '''Should fail as the word is not strictly alphabets'''
         self.assertFalse(ui.user_input_validation('a@s8t', ['trial', 'arise', 'paper'],
-                                                  self.words_list_resource))
+                                                  self.dic))
 
 
 if __name__ == '__main__':
