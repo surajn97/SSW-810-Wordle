@@ -24,70 +24,80 @@ class Wordle:
 
     def game_loop(self, attempts: int):
         '''Gives user x amount of attempts to guess the hidden word'''
-
-        # Create new Word file with 5 letter words
-        utility.load_dictionary()
-        # Hidden word
-        game_word = self.dicti.load_dictionary()
-        print(game_word)
-        self.log.write_log(f'Selected Word: {game_word}\n')
-        guess = False
-        # List of words entered by the user
-        attempted_words = []
-        success_attempt = 0
-        for i in range(attempts):
-            # Get Input from user and split the word into letters
-            user_input = ui.get_user_input_recur(
-                i+1, attempts, attempted_words, self.dicti, self.log)
-            # Update the list of attempted words for future comparison
-            attempted_words.append(user_input)
-            # Create a temporary copy of the hidden word to manipulate
-            temp_game_word = game_word
-            # Compare the user word to the game word and check if user won
-            if self.compare_word(user_input, temp_game_word):
-                guess = True
-                success_attempt = i
-                break
-        if guess:
-            print('You guessed the word correctly!!')
-            self.log.write_log('You guessed the word correctly!!\n')
-        else:
-            print(f"The word was {''.join(game_word)}")
-            print('Better luck next time!')
-            self.log.write_log('Better luck next time!\n')
-        print('Press enter to exit or guess another word')
-        return success_attempt, guess
+        try:
+            # Create new Word file with 5 letter words
+            utility.load_dictionary()
+            # Hidden word
+            game_word = self.dicti.load_dictionary()
+            print(game_word)
+            self.log.write_log(f'Selected Word: {game_word}\n')
+            guess = False
+            # List of words entered by the user
+            attempted_words = []
+            success_attempt = 0
+            for i in range(attempts):
+                # Get Input from user and split the word into letters
+                user_input, validity = ui.get_user_input_recur(
+                    i+1, attempts, attempted_words, self.dicti, self.log)
+                # Quit game if validity is 2
+                if validity == 2:
+                    return success_attempt, guess, True
+                # Update the list of attempted words for future comparison
+                attempted_words.append(user_input)
+                # Create a temporary copy of the hidden word to manipulate
+                temp_game_word = game_word
+                # Compare the user word to the game word and check if user won
+                if self.compare_word(user_input, temp_game_word):
+                    guess = True
+                    success_attempt = i
+                    break
+            if guess:
+                print('You guessed the word correctly!!')
+                self.log.write_log('You guessed the word correctly!!\n')
+            else:
+                print(f"The word was {''.join(game_word)}")
+                print('Better luck next time!')
+                self.log.write_log('Better luck next time!\n')
+            print('Press enter to exit or guess another word')
+            return success_attempt, guess, False
+        except:
+            print('Fatal error in game loop')
+            return 0, False, True
 
     def compare_word(self, user_word: str, game_word: str):
         '''Compares the user input word with the hidden word and returns true if both are equal'''
-        correct = 0
-        user_word = list(user_word.upper())
-        game_word = list(game_word.upper())
-        result = ['']*len(game_word)
-        for i in range(len(user_word)):
-            if game_word[i] == user_word[i]:
-                result[i] = ui.print_green(user_word[i])
-                user_word[i] = game_word[i] = '#'
-                correct += 1
+        try:
+            correct = 0
+            user_word = list(user_word.upper())
+            game_word = list(game_word.upper())
+            result = ['']*len(game_word)
+            for i in range(len(user_word)):
+                if game_word[i] == user_word[i]:
+                    result[i] = ui.print_green(user_word[i])
+                    user_word[i] = game_word[i] = '#'
+                    correct += 1
 
-        if correct == len(game_word):
+            if correct == len(game_word):
+                output = ''.join(result)
+                print(eval(f"f'{output}'"))
+                return True
+
+            for i, letter in enumerate(user_word):
+                if letter == '#':
+                    continue
+                if letter in game_word:
+                    result[i] = ui.print_yellow(letter + '`')
+                    # Clear the letter so it's not searched again
+                    game_word[game_word.index(letter)] = '#'
+                else:
+                    result[i] = ui.print_red(letter + '"')
+                # Check if the word was correct
             output = ''.join(result)
             print(eval(f"f'{output}'"))
-            return True
-
-        for i, letter in enumerate(user_word):
-            if letter == '#':
-                continue
-            if letter in game_word:
-                result[i] = ui.print_yellow(letter + '`')
-                # Clear the letter so it's not searched again
-                game_word[game_word.index(letter)] = '#'
-            else:
-                result[i] = ui.print_red(letter + '"')
-            # Check if the word was correct
-        output = ''.join(result)
-        print(eval(f"f'{output}'"))
-        return False
+            return False
+        except:
+            print("Could not compare words")
+            return False
 
     def game_statistics(self, number_of_games, win_percent, guess_distribuition):
         '''Game statistics info'''
@@ -110,7 +120,9 @@ class Wordle:
         game_distribuiton = [0]*6
         while True:
             self.log.write_log(f"Game #{num_of_games+1}\n")
-            success, win = self.game_loop(total_attempts)
+            success, win, should_quit = self.game_loop(total_attempts)
+            if should_quit:
+                break
             if win:
                 win_count += 1
                 game_distribuiton[success] += 1
