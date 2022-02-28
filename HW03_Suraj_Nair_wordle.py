@@ -29,7 +29,6 @@ class Wordle:
             utility.load_dictionary()
             # Hidden word
             game_word = self.dicti.load_dictionary()
-            print(game_word)
             self.log.write_log(f'Selected Word: {game_word}\n')
             guess = False
             # List of words entered by the user

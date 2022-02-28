@@ -84,20 +84,6 @@ class WordleTest (unittest.TestCase):
         self.assertFalse(ui.user_input_validation('a@s8t', ['trial', 'arise', 'paper'],
                                                   self.dic))
 
-    def test_utility(self) -> None:
-        '''Should Pass as the words.txt file exists and can create a new file'''
-        self.assertTrue(utility.load_dictionary())
-
-    @patch('random.choice')
-    def test_check_game_word(self, mock_random):
-        '''To check if hello has already been used as a game word, the function should return a new random word'''
-        # Set Random choice to hello
-        mock_random.return_value = ["hello", "fixed"]
-        dic = dictionary.Dictionary()
-        # Add hello to already used words list
-        dic.valid_words.append('hello')
-        self.assertNotEqual(dic.load_dictionary(), 'hello')
-
 
 if __name__ == '__main__':
     unittest.main()
