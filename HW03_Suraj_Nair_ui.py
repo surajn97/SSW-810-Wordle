@@ -11,9 +11,8 @@ def get_user_input_recur(attempt_no: int, total_attempts: int, attempted_words: 
             valid, word = get_user_input(attempt_no, total_attempts,
                                          attempted_words, dictionary, logger)
         return word, valid
-    except:
-        print('Error in user input')
-        return ''
+    except Exception as e:
+        raise Exception(e)
 
 
 def get_user_input(attempt_no: int, total_attempts: int, attempted_words: list, dictionary: Dictionary, logger: Logger) -> tuple[bool, str]:
@@ -35,10 +34,10 @@ def get_user_input(attempt_no: int, total_attempts: int, attempted_words: list, 
                 f'Invalid User Input #{attempt_no}: {user_input}\n')
         return int(valid), user_input
     except Exception as e:
-        print(e)
+        raise Exception(e)
 
 
-def user_input_validation(user_input, attempted_words, dictionary: Dictionary):
+def user_input_validation(user_input: str, attempted_words: list, dictionary: Dictionary) -> bool:
     if not user_input.isalpha():
         print("Only alphabets are allowed")
         return False
