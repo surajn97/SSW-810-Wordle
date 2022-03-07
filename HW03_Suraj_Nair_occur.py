@@ -12,7 +12,7 @@ class Occurence:
     def get_occurence_frequency(self, words: list) -> None:
         '''Gets the frequency of all the letters in the list of words'''
         if not words or len(words) == 0:
-            raise Exception("Error: Invalid words list")
+            raise TypeError("Error: Invalid words list")
         for word in words:
             for i, letter in enumerate(word.lower()):
                 self.letter_freq[letter][i] += 1
@@ -29,7 +29,7 @@ class Occurence:
                 for key, val in sorted(self.letter_freq.items()):
                     csv_writer.writerow(
                         [key, val[0], val[1], val[2], val[3], val[4]])
-                print('Done')
+                print('Letter Frequency file generated')
         except FileNotFoundError:
             raise Exception("Error: File not found.  Aborting")
         except OSError:
@@ -80,7 +80,7 @@ class Occurence:
                 for i, val in enumerate(sorted_weight):
                     csv_writer.writerow(
                         [i+1, val[0], '{0:.10f}'.format(val[1])])
-                print('Done')
+                print('Word Rank file generated')
         except FileNotFoundError:
             raise Exception("Error: File not found.  Aborting")
         except OSError:
