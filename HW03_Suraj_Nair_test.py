@@ -5,6 +5,7 @@ import HW03_Suraj_Nair_dictionary as dictionary
 import HW03_Suraj_Nair_wordle as wordle
 import HW03_Suraj_Nair_utility as utility
 import HW03_Suraj_Nair_logging as logger
+import HW03_Suraj_Nair_occur as occurence
 
 
 class WordleTest (unittest.TestCase):
@@ -97,6 +98,20 @@ class WordleTest (unittest.TestCase):
         # Add hello to already used words list
         dic.valid_words.append('hello')
         self.assertNotEqual(dic.load_dictionary(), 'hello')
+
+    def test_word_frequency(self) -> None:
+        '''Check if dictionary is not empty'''
+        utility.load_dictionary()
+        dicti = dictionary.Dictionary()
+        dicti.load_dictionary()
+        occ = occurence.Occurence()
+        occ.get_occurence_frequency(dicti.words)
+        self.assertNotEqual(len(occ.letter_freq), 0)
+
+    def test_word_frequency(self) -> None:
+        '''Check when list is not passed'''
+        occ = occurence.Occurence()
+        self.assertRaises(TypeError, occ.get_occurence_frequency)
 
 
 if __name__ == '__main__':
