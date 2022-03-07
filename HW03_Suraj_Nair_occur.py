@@ -64,7 +64,7 @@ class Occurence:
         weight = 1
         for i, letter in enumerate(word.lower()):
             weight *= freq_dict[letter][i]
-        return weight
+        return round(weight, 10)
 
     def get_words_weight(self, words: list, freq_dict: dict) -> dict:
         weight_dict = {}
@@ -72,13 +72,14 @@ class Occurence:
             word = word.lower()
             weight_dict[word] = self.get_word_freq_weight(word, freq_dict)
 
-        sorted_weight = sorted(weight_dict.items(), key=lambda x: x[1])
+        sorted_weight = sorted(weight_dict.items(),
+                               key=lambda x: x[1], reverse=True)
         try:
             with open('wordRank.csv', 'w', newline='') as csvfile:
                 csv_writer = csv.writer(csvfile, delimiter=',')
                 for i, val in enumerate(sorted_weight):
                     csv_writer.writerow(
-                        [i+1, val[0], val[1]])
+                        [i+1, val[0], '{0:.10f}'.format(val[1])])
                 print('Done')
         except FileNotFoundError:
             raise Exception("Error: File not found.  Aborting")
