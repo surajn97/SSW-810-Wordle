@@ -89,7 +89,7 @@ class WordleTest (unittest.TestCase):
         self.assertTrue(utility.load_dictionary())
 
     @patch('random.choice')
-    def test_check_game_word(self, mock_random):
+    def test_check_game_word(self, mock_random) -> None:
         '''To check if hello has already been used as a game word, the function should return a new random word'''
         # Set Random choice to hello
         mock_random.return_value = ["hello", "fixed"]

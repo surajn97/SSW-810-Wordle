@@ -9,7 +9,7 @@ class Wordle:
         self.log = logger.Logger()
         self.dicti = dictionary.Dictionary()
 
-    def game_greetings(self, attempts: int):
+    def game_greetings(self, attempts: int) -> None:
         '''Basic Greetings before the game begins'''
         print('\n***** WORDLE *****\n')
         print(f'Guess the WORDLE in {attempts} tries.')
@@ -22,7 +22,7 @@ class Wordle:
         print(ui.print_red('Red') +
               ' color shows letter is not in the word in any spot.\n')
 
-    def game_loop(self, attempts: int):
+    def game_loop(self, attempts: int) -> tuple[int, bool, bool]:
         '''Gives user x amount of attempts to guess the hidden word'''
         try:
             # Create new Word file with 5 letter words
@@ -59,11 +59,11 @@ class Wordle:
                 self.log.write_log('Better luck next time!\n')
             print('Press enter to exit or guess another word')
             return success_attempt, guess, False
-        except:
-            print('Fatal error in game loop')
+        except Exception as e:
+            print(e)
             return 0, False, True
 
-    def compare_word(self, user_word: str, game_word: str):
+    def compare_word(self, user_word: str, game_word: str) -> bool:
         '''Compares the user input word with the hidden word and returns true if both are equal'''
         try:
             correct = 0
@@ -95,10 +95,9 @@ class Wordle:
             print(eval(f"f'{output}'"))
             return False
         except:
-            print("Could not compare words")
-            return False
+            raise Exception("Error: Could not compare words")
 
-    def game_statistics(self, number_of_games, win_percent, guess_distribuition):
+    def game_statistics(self, number_of_games: int, win_percent: int, guess_distribuition: list) -> None:
         '''Game statistics info'''
         print('\n***** Game Statistics *****\n')
         self.log.write_log('***** Game Statistics *****\n')
@@ -112,7 +111,7 @@ class Wordle:
             print(f'{i+1}: {dist}')
             self.log.write_log(f'{i+1}: {dist}\n')
 
-    def start_game(self):
+    def start_game(self) -> None:
         total_attempts = 6
         self.game_greetings(total_attempts)
         num_of_games, win_count = 0, 0
