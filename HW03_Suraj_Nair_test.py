@@ -15,6 +15,8 @@ class WordleTest (unittest.TestCase):
         cls.dic = dictionary.Dictionary()
         cls.dic.load_dictionary()
         cls.log = logger.Logger()
+        cls.user_interface = ui.Ui()
+        cls.util = utility.Utility()
 
     @classmethod
     def tearDownClass(cls):
@@ -50,44 +52,44 @@ class WordleTest (unittest.TestCase):
     @patch('builtins.input', side_effect=['Hello'])
     def test_get_user_input_true(self, mock_inputs) -> None:
         """Check if User Input is correct"""
-        self.assertEqual(ui.get_user_input(
+        self.assertEqual(self.user_interface.get_user_input(
             1, 6, ['trial', 'arise', 'paper'], self.dic, self.log), (True, 'HELLO'))
 
     @patch('builtins.input', side_effect=['doctor'])
     def test_get_user_input_length_false(self, mock_inputs) -> None:
         """User Input should return false as it is a 6 letter word"""
-        self.assertEqual(ui.get_user_input(
+        self.assertEqual(self.user_interface.get_user_input(
             1, 6, ['trial', 'arise', 'paper'], self.dic, self.log), (False, 'DOCTOR'))
 
     @patch('builtins.input', side_effect=['asdfg'])
     def test_get_user_input_valid_false(self, mock_inputs) -> None:
         """User Input should return false as it is not a valid word"""
-        self.assertEqual(ui.get_user_input(
+        self.assertEqual(self.user_interface.get_user_input(
             1, 6, ['trial', 'arise', 'paper'], self.dic, self.log), (False, 'ASDFG'))
 
     def test_user_input_check_true(self) -> None:
         '''Check if a word satisfies all conditions'''
-        self.assertTrue(ui.user_input_validation('hello', ['trial', 'arise', 'paper'],
-                                                 self.dic))
+        self.assertTrue(self.user_interface.user_input_validation('hello', ['trial', 'arise', 'paper'],
+                                                                  self.dic))
 
     def test_user_input_check_false(self) -> None:
         '''Should fail as the word is in attempted words'''
-        self.assertFalse(ui.user_input_validation('trial', ['trial', 'arise', 'paper'],
-                                                  self.dic))
+        self.assertFalse(self.user_interface.user_input_validation('trial', ['trial', 'arise', 'paper'],
+                                                                   self.dic))
 
     def test_user_input_check_false_length(self) -> None:
         '''Should fail as the word is not 5 letter'''
-        self.assertFalse(ui.user_input_validation('doctor', ['trial', 'arise', 'paper'],
-                                                  self.dic))
+        self.assertFalse(self.user_interface.user_input_validation('doctor', ['trial', 'arise', 'paper'],
+                                                                   self.dic))
 
     def test_user_input_check_false_alpha(self) -> None:
         '''Should fail as the word is not strictly alphabets'''
-        self.assertFalse(ui.user_input_validation('a@s8t', ['trial', 'arise', 'paper'],
-                                                  self.dic))
+        self.assertFalse(self.user_interface.user_input_validation('a@s8t', ['trial', 'arise', 'paper'],
+                                                                   self.dic))
 
     def test_utility(self) -> None:
         '''Should Pass as the words.txt file exists and can create a new file'''
-        self.assertTrue(utility.load_dictionary())
+        self.assertTrue(self.util.load_dictionary())
 
     @patch('random.choice')
     def test_check_game_word(self, mock_random) -> None:
