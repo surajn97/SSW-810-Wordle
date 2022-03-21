@@ -88,6 +88,9 @@ class Occurence:
         except Exception as err:
             raise Exception(f"Unexpected error opening is", repr(err))
 
+    def __str__(self) -> str:
+        return f'Total Frequencies: {len(self.letter_freq)}'
+
 
 if __name__ == "__main__":
     utility.load_dictionary()
