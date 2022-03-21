@@ -1,4 +1,4 @@
-import HW03_Suraj_Nair_ui as ui
+import HW03_Suraj_Nair_ui as userinterface
 import HW03_Suraj_Nair_dictionary as dictionary
 import HW03_Suraj_Nair_logging as logger
 import HW03_Suraj_Nair_utility as utility
@@ -8,6 +8,8 @@ class Wordle:
     def __init__(self) -> None:
         self.log = logger.Logger()
         self.dicti = dictionary.Dictionary()
+        self.util = utility.Utility()
+        self.ui = userinterface.Ui()
 
     def game_greetings(self, attempts: int) -> None:
         '''Basic Greetings before the game begins'''
@@ -15,18 +17,18 @@ class Wordle:
         print(f'Guess the WORDLE in {attempts} tries.')
         print('Each guess must be a valid 5 letter word. Hit the enter button to submit.')
         print('After each guess, the color of the letters will change to show how close your guess was to the word.\n')
-        print(ui.print_green('Green') +
+        print(self.ui.print_green('Green') +
               ' color shows letter is in the word and in the correct spot.')
-        print(ui.print_yellow('Yellow') +
+        print(self.ui.print_yellow('Yellow') +
               ' color shows letter is in the word but in the wrong spot.')
-        print(ui.print_red('Red') +
+        print(self.ui.print_red('Red') +
               ' color shows letter is not in the word in any spot.\n')
 
     def game_loop(self, attempts: int) -> tuple[int, bool, bool]:
         '''Gives user x amount of attempts to guess the hidden word'''
         try:
             # Create new Word file with 5 letter words
-            utility.load_dictionary()
+            self.util.load_dictionary()
             # Hidden word
             game_word = self.dicti.load_dictionary()
             self.log.write_log(f'Selected Word: {game_word}\n')
@@ -36,7 +38,7 @@ class Wordle:
             success_attempt = 0
             for i in range(attempts):
                 # Get Input from user and split the word into letters
-                user_input, validity = ui.get_user_input_recur(
+                user_input, validity = self.ui.get_user_input_recur(
                     i+1, attempts, attempted_words, self.dicti, self.log)
                 # Quit game if validity is 2
                 if validity == 2:
@@ -72,7 +74,7 @@ class Wordle:
             result = ['']*len(game_word)
             for i in range(len(user_word)):
                 if game_word[i] == user_word[i]:
-                    result[i] = ui.print_green(user_word[i])
+                    result[i] = self.ui.print_green(user_word[i])
                     user_word[i] = game_word[i] = '#'
                     correct += 1
 
@@ -85,11 +87,11 @@ class Wordle:
                 if letter == '#':
                     continue
                 if letter in game_word:
-                    result[i] = ui.print_yellow(letter + '`')
+                    result[i] = self.ui.print_yellow(letter + '`')
                     # Clear the letter so it's not searched again
                     game_word[game_word.index(letter)] = '#'
                 else:
-                    result[i] = ui.print_red(letter + '"')
+                    result[i] = self.ui.print_red(letter + '"')
                 # Check if the word was correct
             output = ''.join(result)
             print(eval(f"f'{output}'"))
@@ -127,6 +129,9 @@ class Wordle:
             num_of_games += 1
             self.game_statistics(num_of_games, (win_count /
                                                 num_of_games)*100, game_distribuiton)
+
+    def __str__(self) -> str:
+        return 'Main Game Object'
 
 
 if __name__ == "__main__":

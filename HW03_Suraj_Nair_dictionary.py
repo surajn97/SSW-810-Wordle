@@ -39,3 +39,6 @@ class Dictionary:
             return word.lower() in self.words
         except:
             raise Exception('Error: Word could not be checked')
+
+    def __str__(self) -> str:
+        return f'Total Words:{len(self.words)}\nValid Words:{len(self.valid_words)}'
