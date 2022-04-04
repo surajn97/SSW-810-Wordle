@@ -6,14 +6,14 @@ class Ui:
     def __init__(self) -> None:
         self.latest_typed_word = ''
 
-    def get_user_input_recur(self, attempt_no: int, total_attempts: int, attempted_words: list, dictionary: Dictionary, logger) -> str:
+    def get_user_input_recur(self, attempt_no: int, total_attempts: int, attempted_words: list, dictionary: Dictionary, logger, is_automated: bool, automated_word: str = None) -> str:
         '''Gets input word from user until valid'''
         try:
             valid = 0  # 0 - False, 1- True, 2- Exit
             # Keep getting input from user until it's a unique 5 letter word
             while valid == 0:
-                valid, word = self.get_user_input(attempt_no, total_attempts,
-                                                  attempted_words, dictionary, logger)
+                valid, word = self.get_automated_input(attempt_no, total_attempts, attempted_words, dictionary, logger, automated_word) if is_automated else self.get_user_input(
+                    attempt_no, total_attempts, attempted_words, dictionary, logger)
             return word, valid
         except Exception as e:
             raise Exception(e)
@@ -38,6 +38,28 @@ class Ui:
                 logger.write_log(
                     f'Invalid User Input #{attempt_no}: {user_input}\n')
             return int(valid), user_input
+        except Exception as e:
+            raise Exception(e)
+
+    def get_automated_input(self, attempt_no: int, total_attempts: int, attempted_words: list, dictionary: Dictionary, logger: Logger, input_word: str) -> tuple[bool, str]:
+        '''Gets automated input word'''
+        try:
+            print(
+                f'Attempt {attempt_no} / {total_attempts} --> Please enter a 5 letter word:')
+            self.latest_typed_word = input_word
+            if not input_word:
+                print('Exiting game!')
+                logger.write_log('User Exited the game\n')
+                logger.close_log()
+                return 2, ''
+            valid = self.user_input_validation(
+                input_word, attempted_words, dictionary)
+            if valid:
+                logger.write_log(f'User Input #{attempt_no}: {input_word}\n')
+            else:
+                logger.write_log(
+                    f'Invalid User Input #{attempt_no}: {input_word}\n')
+            return int(valid), input_word
         except Exception as e:
             raise Exception(e)
 

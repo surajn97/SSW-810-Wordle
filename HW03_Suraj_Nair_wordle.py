@@ -2,14 +2,25 @@ import HW03_Suraj_Nair_ui as userinterface
 import HW03_Suraj_Nair_dictionary as dictionary
 import HW03_Suraj_Nair_logging as logger
 import HW03_Suraj_Nair_utility as utility
+import HW03_Suraj_Nair_word_finder as wordFinder
 
 
 class Wordle:
-    def __init__(self) -> None:
+    def __init__(self, is_automated: bool = False, number_of_automated_games: int = 1) -> None:
         self.log = logger.Logger()
         self.dicti = dictionary.Dictionary()
         self.util = utility.Utility()
+        # Create new Word file with 5 letter words
+        self.util.load_dictionary()
+        # Reads the new Word file with 5 letter words
+        self.dicti.load_dictionary()
         self.ui = userinterface.Ui()
+        self.is_automated = is_automated
+        self.word_finder = wordFinder.WordFinder()
+        self.number_of_automated_games = number_of_automated_games
+        self.bad_letters = set()
+        self.good_letters = set()
+        self.correct_letters = set()
 
     def game_greetings(self, attempts: int) -> None:
         '''Basic Greetings before the game begins'''
@@ -27,10 +38,8 @@ class Wordle:
     def game_loop(self, attempts: int) -> tuple[int, bool, bool]:
         '''Gives user x amount of attempts to guess the hidden word'''
         try:
-            # Create new Word file with 5 letter words
-            self.util.load_dictionary()
             # Hidden word
-            game_word = self.dicti.load_dictionary()
+            game_word = self.dicti.get_game_word()
             self.log.write_log(f'Selected Word: {game_word}\n')
             guess = False
             # List of words entered by the user
@@ -38,8 +47,17 @@ class Wordle:
             success_attempt = 0
             for i in range(attempts):
                 # Get Input from user and split the word into letters
-                user_input, validity = self.ui.get_user_input_recur(
-                    i+1, attempts, attempted_words, self.dicti, self.log)
+                if self.is_automated:
+                    automated_word = self.word_finder.find_word_automated(
+                        list(self.good_letters), list(
+                            self.correct_letters), list(self.bad_letters))
+                    print(automated_word)
+                    self.word_finder
+                    user_input, validity = self.ui.get_user_input_recur(
+                        i+1, attempts, attempted_words, self.dicti, self.log, self.is_automated, automated_word)
+                else:
+                    user_input, validity = self.ui.get_user_input_recur(
+                        i+1, attempts, attempted_words, self.dicti, self.log, self.is_automated)
                 # Quit game if validity is 2
                 if validity == 2:
                     return success_attempt, guess, True
@@ -72,6 +90,17 @@ class Wordle:
             user_word = list(user_word.upper())
             game_word = list(game_word.upper())
             result = ['']*len(game_word)
+
+            # build good. bad, correct letter list
+
+            for i, letter in enumerate(user_word):
+                if letter == game_word[i]:
+                    self.correct_letters.add((letter, i))
+                if letter in game_word:
+                    self.good_letters.add(letter)
+                else:
+                    self.bad_letters.add(letter)
+
             for i in range(len(user_word)):
                 if game_word[i] == user_word[i]:
                     result[i] = self.ui.print_green(user_word[i])
@@ -119,6 +148,14 @@ class Wordle:
         num_of_games, win_count = 0, 0
         game_distribuiton = [0]*6
         while True:
+            if self.is_automated and num_of_games == self.number_of_automated_games:
+                break
+            # Re-initialize word finder, good letters, bad letters and correct letters
+            self.word_finder = wordFinder.WordFinder()
+            self.good_letters = set()
+            self.bad_letters = set()
+            self.correct_letters = set()
+
             self.log.write_log(f"Game #{num_of_games+1}\n")
             success, win, should_quit = self.game_loop(total_attempts)
             if should_quit:

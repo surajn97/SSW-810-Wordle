@@ -11,7 +11,7 @@ class Dictionary:
         '''Check if the dictionary file exists'''
         return os.path.exists(file_path)
 
-    def load_dictionary(self) -> str:
+    def load_dictionary(self) -> None:
         try:
             '''Reads the words text file and returns a list of valid words along with a random word'''
             words_file = open("new_words.txt", "r")
@@ -23,6 +23,8 @@ class Dictionary:
             raise Exception(f"Unexpected error opening is", repr(err))
         self.words = words_file.read().splitlines()
         words_file.close()
+
+    def get_game_word(self) -> str:
         if len(self.valid_words) == len(self.words):
             self.valid_words.clear()
         game_word = random.choice(self.words)
