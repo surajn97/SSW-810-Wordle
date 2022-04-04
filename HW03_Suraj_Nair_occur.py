@@ -29,7 +29,7 @@ class Occurence:
                 for key, val in sorted(self.letter_freq.items()):
                     csv_writer.writerow(
                         [key, val[0], val[1], val[2], val[3], val[4]])
-                print('Letter Frequency file generated')
+                # print('Letter Frequency file generated')
         except FileNotFoundError:
             raise Exception("Error: File not found.  Aborting")
         except OSError:

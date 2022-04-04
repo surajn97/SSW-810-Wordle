@@ -27,8 +27,7 @@ class WordFinder:
 
     def get_user_input(self):
         '''Gets user input'''
-
-        good_letters, bad_letters, correct_letters = None,   None,  None
+        good_letters, bad_letters, correct_letters = [],   [],  []
         good_words = input(
             'Please enter up to 5 Good letters (Press enter to ignore):\n')
         if len(good_words) > 0:
@@ -43,7 +42,7 @@ class WordFinder:
                 bad_words = input('Please enter Bad letters:\n')
             bad_letters = list(bad_words)
 
-        correct_letters = None
+        correct_letters = []
         correct_words = input(
             'Enter Correct letters with spaces for blanks (Press enter to ignore):\n')
         if len(correct_words) > 0:
@@ -93,6 +92,30 @@ class WordFinder:
         else:
             for i, word in enumerate(self.word_rank_list[:50]):
                 print(f'{i+1}. {word}')
+
+    def find_word_automated(self, good_letters: list, correct_letters_with_pos: list = None, wrong_letters: list = None) -> str:
+        '''Finds top possible word'''
+        if len(good_letters) != 0 or len(wrong_letters) != 0 or len(correct_letters_with_pos) != 0:
+            for word in self.word_rank_list:
+                word = word.lower()
+                if len(wrong_letters) != 0 and any(x.lower() in word for x in wrong_letters):
+                    continue
+                if len(good_letters) != 0 and any(x.lower() not in word for x in good_letters):
+                    continue
+                if len(correct_letters_with_pos) != 0:
+                    flag = True
+                    for letter, index in correct_letters_with_pos:
+                        if word[index].lower() != letter.lower():
+                            flag = False
+                            break
+                    if flag:
+                        self.word_rank_list.remove(word)
+                        return word
+                else:
+                    self.word_rank_list.remove(word)
+                    return word
+        else:
+            return self.word_rank_list.pop(0)
 
 
 if __name__ == "__main__":
