@@ -1,6 +1,6 @@
 import HW03_Suraj_Nair_ui as userinterface
 import HW03_Suraj_Nair_dictionary as dictionary
-import HW03_Suraj_Nair_logging as logger
+import HW03_Suraj_Nair_logging_db as logger
 import HW03_Suraj_Nair_utility as utility
 import HW03_Suraj_Nair_word_finder as wordFinder
 
@@ -40,7 +40,7 @@ class Wordle:
         try:
             # Hidden word
             game_word = self.dicti.get_game_word()
-            self.log.write_log(f'Selected Word: {game_word}\n')
+            self.log.write_game_log(game_word)
             guess = False
             # List of words entered by the user
             attempted_words = []
@@ -72,11 +72,9 @@ class Wordle:
                     break
             if guess:
                 print('You guessed the word correctly!!')
-                self.log.write_log('You guessed the word correctly!!\n')
             else:
                 print(f"The word was {''.join(game_word)}")
                 print('Better luck next time!')
-                self.log.write_log('Better luck next time!\n')
             print('Press enter to exit or guess another word')
             return success_attempt, guess, False
         except Exception as e:
@@ -128,19 +126,15 @@ class Wordle:
         except:
             raise Exception("Error: Could not compare words")
 
-    def game_statistics(self, number_of_games: int, win_percent: int, guess_distribuition: list) -> None:
+    def game_statistics(self,did_win:bool, number_of_games: int, win_percent: int, guess_distribuition: list) -> None:
         '''Game statistics info'''
         print('\n***** Game Statistics *****\n')
-        self.log.write_log('***** Game Statistics *****\n')
         print(f'{number_of_games} Games Played')
-        self.log.write_log(f'{number_of_games} Games Played\n')
         print(f'{win_percent:.2f}% Win Rate')
-        self.log.write_log(f'{win_percent:.2f}% Win Rate\n')
         print('Guess Distribution:')
-        self.log.write_log('Guess Distribution:\n')
+        self.log.write_game_stats_log(did_win=did_win,games_played=number_of_games,win_rate=round(win_percent, 2), guess_dist=str(guess_distribuition))
         for i, dist in enumerate(guess_distribuition):
             print(f'{i+1}: {dist}')
-            self.log.write_log(f'{i+1}: {dist}\n')
 
     def start_game(self) -> None:
         total_attempts = 6
@@ -155,8 +149,7 @@ class Wordle:
             self.good_letters = set()
             self.bad_letters = set()
             self.correct_letters = set()
-
-            self.log.write_log(f"Game #{num_of_games+1}\n")
+            print(f"Game #{num_of_games+1}\n")
             success, win, should_quit = self.game_loop(total_attempts)
             if should_quit:
                 break
@@ -164,7 +157,7 @@ class Wordle:
                 win_count += 1
                 game_distribuiton[success] += 1
             num_of_games += 1
-            self.game_statistics(num_of_games, (win_count /
+            self.game_statistics(win, num_of_games, (win_count /
                                                 num_of_games)*100, game_distribuiton)
 
     def __str__(self) -> str:

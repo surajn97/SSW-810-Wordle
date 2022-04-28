@@ -1,5 +1,5 @@
 from HW03_Suraj_Nair_dictionary import Dictionary
-from HW03_Suraj_Nair_logging import Logger
+from HW03_Suraj_Nair_logging_db import Logger
 
 
 class Ui:
@@ -27,16 +27,14 @@ class Ui:
             self.latest_typed_word = user_input
             if not user_input:
                 print('Exiting game!')
-                logger.write_log('User Exited the game\n')
                 logger.close_log()
                 return 2, ''
             valid = self.user_input_validation(
                 user_input, attempted_words, dictionary)
             if valid:
-                logger.write_log(f'User Input #{attempt_no}: {user_input}\n')
+                logger.write_game_info_log(attempt_no,user_input)
             else:
-                logger.write_log(
-                    f'Invalid User Input #{attempt_no}: {user_input}\n')
+                logger.write_game_info_log(attempt_no,user_input)
             return int(valid), user_input
         except Exception as e:
             raise Exception(e)
@@ -49,16 +47,14 @@ class Ui:
             self.latest_typed_word = input_word
             if not input_word:
                 print('Exiting game!')
-                logger.write_log('User Exited the game\n')
                 logger.close_log()
                 return 2, ''
             valid = self.user_input_validation(
                 input_word, attempted_words, dictionary)
             if valid:
-                logger.write_log(f'User Input #{attempt_no}: {input_word}\n')
+                logger.write_game_info_log(attempt_no,input_word)
             else:
-                logger.write_log(
-                    f'Invalid User Input #{attempt_no}: {input_word}\n')
+                logger.write_game_info_log(attempt_no,input_word)
             return int(valid), input_word
         except Exception as e:
             raise Exception(e)

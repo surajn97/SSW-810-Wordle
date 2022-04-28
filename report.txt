@@ -1,0 +1,11 @@
+***Report from Database****
+Game Statistics Report from 04-28-2022 to 04-28-2022
+Total Games Played: 1000
+Total Games Won: 90.2
+Guess Distribution: 
+Attempt 1: 1
+Attempt 2: 25
+Attempt 3: 175
+Attempt 4: 313
+Attempt 5: 257
+Attempt 6: 131
